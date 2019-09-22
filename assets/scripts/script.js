@@ -1,42 +1,75 @@
 let topics;
 
-const init = () => {
-  topics = [];
+const renderGif = (gifId, stillSrc, gifSrc) => {
+  let counter = 0; // counter to keep track of gif state
 
-  $('#tag-button').click(getTags);
-};
-
-const renderGif = src => {
   // create a column
-  const col = $('<div>', { class: 'col-3' });
+  const col = $('<div>', { class: 'col-sm-12 col-md-4 col-lg-3' });
 
   // create the image
   const img = $('<img>', {
-    class: 'm-auto p-2 img-thumbnail h-100 w-100',
-    src: src
+    class: 'm-1 p-1 img-thumbnail',
+    id: gifId,
+    src: stillSrc
   });
 
   // append elements
   $('#images').append(col);
   col.append(img);
+
+  $('#' + gifId).click(() => {
+    if (!counter) {
+      $('#' + gifId).attr('src', gifSrc);
+      counter = 1;
+    } else {
+      $('#' + gifId).attr('src', stillSrc);
+      counter = 0;
+    }
+  });
 };
 
-const getTags = () => {
-  //   console.log('get tags called');
+const getTags = (str) => {
   let url =
-    'http://api.giphy.com/v1/gifs/search?q=ryan+gosling&api_key=' +
+    'http://api.giphy.com/v1/gifs/search?q=' +
+    str.replace(/ /g, '+') +
+    '&api_key=' +
     key +
-    '&limit=5';
+    '&limit=10';
 
-  $.ajax({ url, method: 'GET' }).then(res => {
-    for (let i = 0; i < res.data.length; i++) {
-      renderGif(res.data[i].images.downsized.url);
-    }
-
+  $.ajax({ url, method: 'GET' }).then((res) => {
     console.log('res :', res);
+    for (let i = 0; i < res.data.length; i++) {
+      renderGif(
+        res.data[i].id,
+        res.data[i].images.downsized_still.url,
+        res.data[i].images.downsized.url
+      );
+    }
   });
+};
+
+const init = () => {
+  topics = [
+    'chikorita',
+    'magikarp',
+    'bulbasaur',
+    'psyduck',
+    'caterpie',
+    'charmander',
+    'pikachu',
+    'squirtle',
+    'pigey',
+    'xatu'
+  ];
+
+  // $('#tag-button').click(() => {
+  //   getTags();
+  // });
 };
 
 window.onload = () => {
   init();
+  topics.forEach((element) => {
+    getTags(element);
+  });
 };
