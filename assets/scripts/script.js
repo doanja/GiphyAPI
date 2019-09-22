@@ -8,7 +8,7 @@ let topics;
  * @param {string} gif the moving link of the gif
  * @param {string} rating the rating of the gif
  */
-const renderGif = (id, still, gif, rating) => {
+const renderGif = (id, still, gif, rating, title, date) => {
   let counter = 0; // counter to keep track of gif state
 
   // create a column
@@ -22,7 +22,9 @@ const renderGif = (id, still, gif, rating) => {
   });
 
   // create the rating
-  const p = $('<p>', { class: 'blockquote pl-2' }).text('Rating: ' + rating);
+  const p = $('<p>', { class: 'blockquote pl-2' }).text(
+    'Title: ' + title + ' | ' + 'Rating: ' + rating + ' | ' + 'Date: ' + date
+  );
 
   // append elements
   $('#images').append(col);
@@ -64,7 +66,9 @@ const getTags = (str) => {
         res.data[i].id,
         res.data[i].images.downsized_still.url,
         res.data[i].images.downsized.url,
-        res.data[i].rating
+        res.data[i].rating,
+        res.data[i].title,
+        res.data[i].import_datetime
       );
     }
   });
