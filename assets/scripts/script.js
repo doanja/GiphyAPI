@@ -1,6 +1,14 @@
 let topics;
 
-const renderGif = (gifId, stillSrc, gifSrc) => {
+/**
+ * function to render gif and ratings and append it to the HTML
+ * and listen to clicks to play/stop the gifs
+ * @param {string} id the id of the gif
+ * @param {string} still the still link of the gif
+ * @param {string} gif the moving link of the gif
+ * @param {string} rating the rating of the gif
+ */
+const renderGif = (id, still, gif, rating) => {
   let counter = 0; // counter to keep track of gif state
 
   // create a column
@@ -8,27 +16,40 @@ const renderGif = (gifId, stillSrc, gifSrc) => {
 
   // create the image
   const img = $('<img>', {
-    class: 'm-1 p-1 img-thumbnail',
-    id: gifId,
-    src: stillSrc
+    class: 'img-thumbnail m-1 p-1',
+    id: id,
+    src: still
   });
+
+  // create the rating
+  const p = $('<p>', { class: 'blockquote pl-2' }).text('Rating: ' + rating);
 
   // append elements
   $('#images').append(col);
-  col.append(img);
+  col.append(img, p);
 
-  $('#' + gifId).click(() => {
+  // listen for clicks
+  $('#' + id).click(() => {
+    // if you have not clicked the gif
     if (!counter) {
-      $('#' + gifId).attr('src', gifSrc);
+      $('#' + id).attr('src', gif);
       counter = 1;
-    } else {
-      $('#' + gifId).attr('src', stillSrc);
+    }
+    // if you clicked the gif
+    else {
+      $('#' + id).attr('src', still);
       counter = 0;
     }
   });
 };
 
+/**
+ * function that sends a GET request to the GIPHY API and
+ * calls the renderGif function to load gifs onto the page
+ * @param {string} str the text to search the api for
+ */
 const getTags = (str) => {
+  // the url past to the request header
   let url =
     'http://api.giphy.com/v1/gifs/search?q=' +
     str.replace(/ /g, '+') +
@@ -36,18 +57,22 @@ const getTags = (str) => {
     key +
     '&limit=10';
 
+  // GET API request
   $.ajax({ url, method: 'GET' }).then((res) => {
-    console.log('res :', res);
     for (let i = 0; i < res.data.length; i++) {
       renderGif(
         res.data[i].id,
         res.data[i].images.downsized_still.url,
-        res.data[i].images.downsized.url
+        res.data[i].images.downsized.url,
+        res.data[i].rating
       );
     }
   });
 };
 
+/**
+ * function to initialize variables
+ */
 const init = () => {
   topics = [
     'chikorita',
@@ -59,17 +84,30 @@ const init = () => {
     'pikachu',
     'squirtle',
     'pigey',
-    'xatu'
+    'brock'
   ];
 
-  // $('#tag-button').click(() => {
-  //   getTags();
-  // });
-};
-
-window.onload = () => {
-  init();
+  // loop through topics array and render gifs
   topics.forEach((element) => {
     getTags(element);
   });
+
+  // adds more gifs to the page
+  $('#tag-button').click(() => {
+    const input = $('#tag-input').val();
+
+    if (input === '') {
+      alert('You must enter a tag first...');
+    } else {
+      getTags(input);
+      $('#tag-input').val('');
+    }
+  });
+};
+
+/**
+ *
+ */
+window.onload = () => {
+  init();
 };
