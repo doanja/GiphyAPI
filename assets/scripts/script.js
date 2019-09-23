@@ -1,14 +1,35 @@
 let topics;
 
 /**
+ * function to render topic buttons
+ * clicking on these buttons will call getTags passing in str
+ * @param {string} str the name of the topic
+ */
+const renderTopics = str => {
+  const strNoSpaces = str.replace(/ /g, '');
+  const button = $('<button>', {
+    type: 'button',
+    class: 'btn btn-primary m-2',
+    id: strNoSpaces
+  }).text(str);
+
+  $('#topics').append(button);
+
+  $('#' + strNoSpaces).click(() => {
+    getTags(str);
+  });
+};
+
+/**
  * function to render gif and ratings and append it to the HTML
  * and listen to clicks to play/stop the gifs
  * @param {string} id the id of the gif
  * @param {string} still the still link of the gif
  * @param {string} gif the moving link of the gif
  * @param {string} rating the rating of the gif
+ * @param {string} title the title of the gif
  */
-const renderGif = (id, still, gif, rating, title, date) => {
+const renderGif = (id, still, gif, rating, title) => {
   let counter = 0; // counter to keep track of gif state
 
   // create a column
@@ -22,13 +43,15 @@ const renderGif = (id, still, gif, rating, title, date) => {
   });
 
   // create the rating
-  const p = $('<p>', { class: 'blockquote pl-2' }).text(
-    'Title: ' + title + ' | ' + 'Rating: ' + rating + ' | ' + 'Date: ' + date
+  const pTitle = $('<p>', { class: 'blockquote pl-2' }).text(title);
+
+  const pRating = $('<p>', { class: 'blockquote pl-2' }).text(
+    'Rating: ' + rating.toUpperCase()
   );
 
   // append elements
   $('#images').append(col);
-  col.append(img, p);
+  col.append(img, pTitle, pRating);
 
   // listen for clicks
   $('#' + id).click(() => {
@@ -50,7 +73,7 @@ const renderGif = (id, still, gif, rating, title, date) => {
  * calls the renderGif function to load gifs onto the page
  * @param {string} str the text to search the api for
  */
-const getTags = (str) => {
+const getTags = str => {
   // the url past to the request header
   let url =
     'http://api.giphy.com/v1/gifs/search?q=' +
@@ -60,7 +83,7 @@ const getTags = (str) => {
     '&limit=10';
 
   // GET API request
-  $.ajax({ url, method: 'GET' }).then((res) => {
+  $.ajax({ url, method: 'GET' }).then(res => {
     for (let i = 0; i < res.data.length; i++) {
       renderGif(
         res.data[i].id,
@@ -79,21 +102,22 @@ const getTags = (str) => {
  */
 const init = () => {
   topics = [
-    'chikorita',
-    'magikarp',
-    'bulbasaur',
-    'psyduck',
-    'caterpie',
-    'charmander',
-    'pikachu',
-    'squirtle',
-    'pigey',
-    'brock'
+    'Animals',
+    'Donald Trump',
+    'People Laughing',
+    'Anime Girls',
+    'Horror Movies',
+    'Family',
+    'Chikorita',
+    'Kojima',
+    'Video Games',
+    'Twerking'
   ];
 
   // loop through topics array and render gifs
-  topics.forEach((element) => {
-    getTags(element);
+  topics.forEach(element => {
+    // getTags(element);
+    renderTopics(element);
   });
 
   // adds more gifs to the page
@@ -110,7 +134,7 @@ const init = () => {
 };
 
 /**
- *
+ * function executes immediately after a page has been loaded
  */
 window.onload = () => {
   init();
