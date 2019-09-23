@@ -5,7 +5,7 @@ let topics;
  * clicking on these buttons will call getTags passing in str
  * @param {string} str the name of the topic
  */
-const renderTopics = str => {
+const renderTopic = str => {
   const strNoSpaces = str.replace(/ /g, '');
   const button = $('<button>', {
     type: 'button',
@@ -98,6 +98,49 @@ const getTags = str => {
 };
 
 /**
+ * function to create a list in localStorage, parse it,
+ * return it as an array
+ */
+const listFromLocalStorage = () => {
+  const string = localStorage.getItem('list'); // json object
+  let list;
+
+  // if there's something in localStorage
+  try {
+    // parse the list
+    list = JSON.parse(string);
+
+    // validates list and determines if what was list is an array
+    if (!Array.isArray(list)) {
+      throw Error('not an array');
+    }
+  } catch (err) {
+    // if there is nothing in localStorage
+
+    list = []; // initialize list
+    // set list is a key in localStorage mapped to an empty array
+    localStorage.setItem('list', '[]');
+  }
+  return list;
+};
+
+/**
+ * function to check localStorage and render topic buttons
+ */
+const attemptToLoadFromStorage = () => {
+  const list = listFromLocalStorage();
+
+  // loop through each topic from localStorage
+  for (const topic of list) {
+    // check to see if the topic does not exist in the topics array
+    if (!topics.includes(topic)) {
+      topics.push(topic); // add the topic to array
+      renderTopic(topic); // render the topic buttons
+    }
+  }
+};
+
+/**
  * function to initialize variables
  */
 const init = () => {
@@ -117,7 +160,7 @@ const init = () => {
   // loop through topics array and render gifs
   topics.forEach(element => {
     // getTags(element);
-    renderTopics(element);
+    renderTopic(element);
   });
 
   // adds more gifs to the page
@@ -131,6 +174,20 @@ const init = () => {
       $('#tag-input').val('');
     }
   });
+
+  $('#fav-button').click(() => {
+    const input = $('#tag-input').val();
+
+    if (input === '') {
+      alert('You must enter a tag first...');
+    } else {
+      renderTopic(input);
+      $('#tag-input').val('');
+      topics.push(input);
+      localStorage.clear();
+      localStorage.setItem('list', JSON.stringify(topics));
+    }
+  });
 };
 
 /**
@@ -138,4 +195,5 @@ const init = () => {
  */
 window.onload = () => {
   init();
+  attemptToLoadFromStorage();
 };
