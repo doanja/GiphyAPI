@@ -98,6 +98,47 @@ const getTags = str => {
 };
 
 /**
+ * function that searches for the gif and renders it when the search button is clicked
+ */
+const searchButton = () => {
+  const input = $('#tag-input').val(); // clear input
+
+  // if nothing was entered into the input
+  if (input === '') {
+    alert('You must enter a tag first...');
+  }
+  // render gifs
+  else {
+    getTags(input);
+    $('#tag-input').val(''); // clear input
+  }
+};
+
+/**
+ * function that renders topic button and adds it to local storage
+ */
+const favoriteButton = () => {
+  const input = $('#tag-input').val(); // clear input
+  const inputLowerCase = input.toLowerCase(); // conver input to lower case
+
+  // if nothing was entered into the input
+  if (inputLowerCase === '') {
+    alert('You must enter a tag first...');
+  }
+  // if the topic is already in favorites
+  else if (topics.includes(inputLowerCase)) {
+    alert('Topic already added to favorites...');
+  }
+  // if topic is not in topics array
+  else {
+    renderTopic(inputLowerCase); // render the topic button
+    $('#tag-input').val(''); // clear input
+    topics.push(inputLowerCase); // add the topic to the array
+    localStorage.setItem('list', JSON.stringify(topics)); // update local storage
+  }
+};
+
+/**
  * function to create a list in localStorage, parse it,
  * return it as an array
  */
@@ -145,49 +186,29 @@ const attemptToLoadFromStorage = () => {
  */
 const init = () => {
   topics = [
-    'Animals',
-    'Donald Trump',
-    'People Laughing',
-    'Anime Girls',
-    'Horror Movies',
-    'Family',
-    'Chikorita',
-    'Kojima',
-    'Video Games',
-    'Twerking'
+    'animals',
+    'donald trump',
+    'people laughing',
+    'anime girls',
+    'horror movies',
+    'family',
+    'chikorita',
+    'kojima',
+    'video games',
+    'twerking'
   ];
 
   // loop through topics array and render gifs
   topics.forEach(element => {
-    // getTags(element);
+    element.toLowerCase();
     renderTopic(element);
   });
 
-  // adds more gifs to the page
-  $('#tag-button').click(() => {
-    const input = $('#tag-input').val();
+  // when search button is clicked (searches for gifs)
+  $('#tag-button').click(searchButton);
 
-    if (input === '') {
-      alert('You must enter a tag first...');
-    } else {
-      getTags(input);
-      $('#tag-input').val('');
-    }
-  });
-
-  $('#fav-button').click(() => {
-    const input = $('#tag-input').val();
-
-    if (input === '') {
-      alert('You must enter a tag first...');
-    } else {
-      renderTopic(input);
-      $('#tag-input').val('');
-      topics.push(input);
-      localStorage.clear();
-      localStorage.setItem('list', JSON.stringify(topics));
-    }
-  });
+  // when add to favorites is clicked (adds topics to favorites)
+  $('#fav-button').click(favoriteButton);
 };
 
 /**
