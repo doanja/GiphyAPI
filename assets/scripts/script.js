@@ -76,7 +76,7 @@ const renderGif = (id, still, gif, rating, title) => {
 const getTags = str => {
   // the url past to the request header
   let url =
-    'http://api.giphy.com/v1/gifs/search?q=' +
+    'https://api.giphy.com/v1/gifs/search?q=' +
     str.replace(/ /g, '+') +
     '&api_key=' +
     key +
