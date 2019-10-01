@@ -50,7 +50,7 @@ const renderGif = (id, still, gif, rating, title) => {
   );
 
   // append elements
-  $('#images').append(col);
+  $('#images').prepend(col);
   col.append(img, pTitle, pRating);
 
   // listen for clicks
@@ -187,15 +187,15 @@ const attemptToLoadFromStorage = () => {
 const init = () => {
   topics = [
     'animals',
-    'donald trump',
-    'people laughing',
-    'anime girls',
+    'america',
+    'laughing',
+    'anime',
     'horror movies',
-    'family',
-    'chikorita',
-    'kojima',
+    'jumping',
+    'memes',
+    'cringe',
     'video games',
-    'twerking'
+    'dancing'
   ];
 
   // loop through topics array and render gifs
